@@ -40,6 +40,7 @@
             <if test="payAccount != null  and payAccount != ''"> and payAccount = #{payAccount}</if>
             <if test="billPic != null  and billPic != ''"> and billPic = #{billPic}</if>
         </where>
+        order by id desc
     </select>
 
     <select id="selectInOutMoneyById" parameterType="Long" resultMap="InOutMoneyResult">
