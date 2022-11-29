@@ -4,87 +4,108 @@
     <th:block th:include="include :: header('收支明细列表')" />
 </head>
 <body class="gray-bg">
-     <div class="container-div">
-        <div class="row">
-            <div class="col-sm-12 search-collapse">
-                <form id="formId">
-                    <div class="select-list">
-                        <ul>
-                            <li>
-                                <label>收支编号：</label>
-                                <input type="text" name="id"/>
-                            </li>
-                            <li>
-                                <label>收/支：</label>
-                                <select name="inOutFlag" th:with="type=${@dict.getType('in_out_money_type')}">
-                                    <option value="">所有</option>
-                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
-                                </select>
-                            </li>
-                            <li>
-                                <label>收支分类：</label>
-                                <select name="type" th:with="type=${@dict.getType('money_use_type')}">
-                                    <option value="">所有</option>
-                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
-                                </select>
-                            </li>
-                            <li>
-                                <label>金额：</label>
-                                <input type="text" name="amount"/>
-                            </li>
-                            <li class="select-time">
-                                <label>收款/付款时间：</label>
-                                <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginPayTime]"/>
-                                <span>-</span>
-                                <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endPayTime]"/>
-                            </li>
-                            <li>
-                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
-                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
-                            </li>
-                        </ul>
-                    </div>
-                </form>
-            </div>
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <label>收支编号：</label>
+                            <input type="text" name="id"/>
+                        </li>
+                        <li>
+                            <label>收/支：</label>
+                            <input type="text" name="inOutFlag"/>
+                        </li>
+                        <li>
+                            <label>收支分类：</label>
+                            <select name="type" th:with="type=${@dict.getType('money_use_type')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <label>金额：</label>
+                            <input type="text" name="amount"/>
+                        </li>
+                        <li class="select-time">
+                            <label>收款/付款时间：</label>
+                            <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginPayTime]"/>
+                            <span>-</span>
+                            <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endPayTime]"/>
+                        </li>
+                        <li>
+                            <label>用途大类：</label>
+                            <select name="useMasterType" th:with="type=${@dict.getType('money_use_master_type')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <label>支付/收款方式：</label>
+                            <select name="payType" th:with="type=${@dict.getType('pay_type')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <label>收款账号：</label>
+                            <input type="text" name="colAccount"/>
+                        </li>
+                        <li>
+                            <label>付款账号：</label>
+                            <input type="text" name="payAccount"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
 
-            <div class="btn-group-sm" id="toolbar" role="group">
-                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="finance:inOutMoney:add">
-                    <i class="fa fa-plus"></i> 添加
-                </a>
-                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="finance:inOutMoney:edit">
-                    <i class="fa fa-edit"></i> 修改
-                </a>
-                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="finance:inOutMoney:remove">
-                    <i class="fa fa-remove"></i> 删除
-                </a>
-                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="finance:inOutMoney:export">
-                    <i class="fa fa-download"></i> 导出
-                </a>
-            </div>
-            <div class="col-sm-12 select-table table-striped">
-                <table id="bootstrap-table"></table>
-            </div>
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="finance:inOutMoney:add">
+                <i class="fa fa-plus"></i> 添加
+            </a>
+            <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="finance:inOutMoney:edit">
+                <i class="fa fa-edit"></i> 修改
+            </a>
+            <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="finance:inOutMoney:remove">
+                <i class="fa fa-remove"></i> 删除
+            </a>
+            <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="finance:inOutMoney:export">
+                <i class="fa fa-download"></i> 导出
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
         </div>
     </div>
-    <th:block th:include="include :: footer" />
-    <script th:inline="javascript">
-        var editFlag = [[${@permission.hasPermi('finance:inOutMoney:edit')}]];
-        var removeFlag = [[${@permission.hasPermi('finance:inOutMoney:remove')}]];
-        var inOutFlagDatas = [[${@dict.getType('in_out_money_type')}]];
-        var typeDatas = [[${@dict.getType('money_use_type')}]];
-        var prefix = ctx + "finance/inOutMoney";
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    var editFlag = [[${@permission.hasPermi('finance:inOutMoney:edit')}]];
+    var removeFlag = [[${@permission.hasPermi('finance:inOutMoney:remove')}]];
+    var inOutFlagDatas = [[${@dict.getType('in_out_money_type')}]];
+    var typeDatas = [[${@dict.getType('money_use_type')}]];
+    var useMasterTypeDatas = [[${@dict.getType('money_use_master_type')}]];
+    var payTypeDatas = [[${@dict.getType('pay_type')}]];
+    var prefix = ctx + "finance/inOutMoney";
 
-        $(function() {
-            var options = {
-                url: prefix + "/list",
-                createUrl: prefix + "/add",
-                updateUrl: prefix + "/edit/{id}",
-                removeUrl: prefix + "/remove",
-                exportUrl: prefix + "/export",
-                modalName: "收支明细",
-                columns: [{
-                    checkbox: true
-                },
+    $(function() {
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            modalName: "收支明细",
+            columns: [{
+                checkbox: true
+            },
                 {
                     field: 'id',
                     title: '收支编号'
@@ -93,14 +114,14 @@
                     field: 'inOutFlag',
                     title: '收/支',
                     formatter: function(value, row, index) {
-                       return $.table.selectDictLabel(inOutFlagDatas, value);
+                        return $.table.selectDictLabel(inOutFlagDatas, value);
                     }
                 },
                 {
                     field: 'type',
                     title: '收支分类',
                     formatter: function(value, row, index) {
-                       return $.table.selectDictLabel(typeDatas, value);
+                        return $.table.selectDictLabel(typeDatas, value);
                     }
                 },
                 {
@@ -112,6 +133,44 @@
                     title: '收款/付款时间'
                 },
                 {
+                    field: 'useMasterType',
+                    title: '用途大类',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(useMasterTypeDatas, value);
+                    }
+                },
+                {
+                    field: 'payType',
+                    title: '支付/收款方式',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(payTypeDatas, value);
+                    }
+                },
+                {
+                    field: 'payer',
+                    title: '付款人'
+                },
+                {
+                    field: 'payee',
+                    title: '收款人'
+                },
+                {
+                    field: 'colAccount',
+                    title: '收款账号'
+                },
+                {
+                    field: 'payAccount',
+                    title: '付款账号'
+                },
+                {
+                    field: 'billPic',
+                    title: '票据图片'
+                },
+                {
+                    field: 'remark',
+                    title: '备注'
+                },
+                {
                     title: '操作',
                     align: 'center',
                     formatter: function(value, row, index) {
@@ -121,9 +180,9 @@
                         return actions.join('');
                     }
                 }]
-            };
-            $.table.init(options);
-        });
-    </script>
+        };
+        $.table.init(options);
+    });
+</script>
 </body>
 </html>

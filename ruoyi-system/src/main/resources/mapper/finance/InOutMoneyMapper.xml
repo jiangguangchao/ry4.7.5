@@ -1,37 +1,52 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.web.controller.pms.finance.inout.mapper.InOutMoneyMapper">
-    
+
     <resultMap type="InOutMoney" id="InOutMoneyResult">
         <result property="id"    column="id"    />
         <result property="inOutFlag"    column="inOutFlag"    />
         <result property="type"    column="type"    />
         <result property="amount"    column="amount"    />
         <result property="payTime"    column="payTime"    />
+        <result property="useMasterType"    column="useMasterType"    />
+        <result property="payType"    column="payType"    />
+        <result property="payer"    column="payer"    />
+        <result property="payee"    column="payee"    />
+        <result property="colAccount"    column="colAccount"    />
+        <result property="payAccount"    column="payAccount"    />
+        <result property="billPic"    column="billPic"    />
+        <result property="remark"    column="remark"    />
     </resultMap>
 
     <sql id="selectInOutMoneyVo">
-        select id, inOutFlag, type, amount, payTime from inoutmoney
+        select id, inOutFlag, type, amount, payTime, useMasterType, payType, payer, payee, colAccount, payAccount, billPic, remark from inoutmoney
     </sql>
 
     <select id="selectInOutMoneyList" parameterType="InOutMoney" resultMap="InOutMoneyResult">
         <include refid="selectInOutMoneyVo"/>
-        <where>  
+        <where>
             <if test="id != null "> and id = #{id}</if>
             <if test="inOutFlag != null "> and inOutFlag = #{inOutFlag}</if>
             <if test="type != null  and type != ''"> and type = #{type}</if>
             <if test="amount != null "> and amount = #{amount}</if>
             <if test="params.beginPayTime != null and params.beginPayTime != '' and params.endPayTime != null and params.endPayTime != ''"> and payTime between #{params.beginPayTime} and #{params.endPayTime}</if>
+            <if test="useMasterType != null  and useMasterType != ''"> and useMasterType = #{useMasterType}</if>
+            <if test="payType != null  and payType != ''"> and payType = #{payType}</if>
+            <if test="payer != null  and payer != ''"> and payer = #{payer}</if>
+            <if test="payee != null  and payee != ''"> and payee = #{payee}</if>
+            <if test="colAccount != null  and colAccount != ''"> and colAccount = #{colAccount}</if>
+            <if test="payAccount != null  and payAccount != ''"> and payAccount = #{payAccount}</if>
+            <if test="billPic != null  and billPic != ''"> and billPic = #{billPic}</if>
         </where>
     </select>
-    
+
     <select id="selectInOutMoneyById" parameterType="Long" resultMap="InOutMoneyResult">
         <include refid="selectInOutMoneyVo"/>
         where id = #{id}
     </select>
-        
+
     <insert id="insertInOutMoney" parameterType="InOutMoney" useGeneratedKeys="true" keyProperty="id">
         insert into inoutmoney
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -39,13 +54,29 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="type != null">type,</if>
             <if test="amount != null">amount,</if>
             <if test="payTime != null">payTime,</if>
-         </trim>
+            <if test="useMasterType != null">useMasterType,</if>
+            <if test="payType != null">payType,</if>
+            <if test="payer != null">payer,</if>
+            <if test="payee != null">payee,</if>
+            <if test="colAccount != null">colAccount,</if>
+            <if test="payAccount != null">payAccount,</if>
+            <if test="billPic != null">billPic,</if>
+            <if test="remark != null">remark,</if>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="inOutFlag != null">#{inOutFlag},</if>
             <if test="type != null">#{type},</if>
             <if test="amount != null">#{amount},</if>
             <if test="payTime != null">#{payTime},</if>
-         </trim>
+            <if test="useMasterType != null">#{useMasterType},</if>
+            <if test="payType != null">#{payType},</if>
+            <if test="payer != null">#{payer},</if>
+            <if test="payee != null">#{payee},</if>
+            <if test="colAccount != null">#{colAccount},</if>
+            <if test="payAccount != null">#{payAccount},</if>
+            <if test="billPic != null">#{billPic},</if>
+            <if test="remark != null">#{remark},</if>
+        </trim>
     </insert>
 
     <update id="updateInOutMoney" parameterType="InOutMoney">
@@ -55,6 +86,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="type != null">type = #{type},</if>
             <if test="amount != null">amount = #{amount},</if>
             <if test="payTime != null">payTime = #{payTime},</if>
+            <if test="useMasterType != null">useMasterType = #{useMasterType},</if>
+            <if test="payType != null">payType = #{payType},</if>
+            <if test="payer != null">payer = #{payer},</if>
+            <if test="payee != null">payee = #{payee},</if>
+            <if test="colAccount != null">colAccount = #{colAccount},</if>
+            <if test="payAccount != null">payAccount = #{payAccount},</if>
+            <if test="billPic != null">billPic = #{billPic},</if>
+            <if test="remark != null">remark = #{remark},</if>
         </trim>
         where id = #{id}
     </update>
@@ -64,7 +103,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteInOutMoneyByIds" parameterType="String">
-        delete from inoutmoney where id in 
+        delete from inoutmoney where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
