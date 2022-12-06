@@ -1,6 +1,8 @@
 package com.ruoyi.web.controller.pms.finance.inout.controller;
 
 import java.util.List;
+
+import com.ruoyi.web.controller.pms.finance.inout.domain.MoneyStatVo;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -123,5 +125,22 @@ public class InOutMoneyController extends BaseController
     public AjaxResult remove(String ids)
     {
         return toAjax(inOutMoneyService.deleteInOutMoneyByIds(ids));
+    }
+
+    @RequiresPermissions("finance:inOutMoney:statView")
+    @GetMapping("/statView")
+    public String statView()
+    {
+        return prefix + "/moneyStat";
+    }
+
+
+    @RequiresPermissions("finance:inOutMoney:stat")
+    @PostMapping("/stat")
+    @ResponseBody
+    public TableDataInfo stat(InOutMoney inOutMoney)
+    {
+        List<MoneyStatVo> moneyStatVos = inOutMoneyService.moneyStat(inOutMoney);
+        return getDataTable(moneyStatVos);
     }
 }

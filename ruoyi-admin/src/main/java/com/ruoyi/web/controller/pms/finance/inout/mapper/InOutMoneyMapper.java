@@ -2,6 +2,7 @@ package com.ruoyi.web.controller.pms.finance.inout.mapper;
 
 import java.util.List;
 import com.ruoyi.web.controller.pms.finance.inout.domain.InOutMoney;
+import com.ruoyi.web.controller.pms.finance.inout.domain.MoneyStatVo;
 
 /**
  * 收支明细Mapper接口
@@ -58,4 +59,7 @@ public interface InOutMoneyMapper
      * @return 结果
      */
     public int deleteInOutMoneyByIds(String[] ids);
+
+
+    public List<MoneyStatVo> moneyStat(InOutMoney inOutMoney);
 }

@@ -1,6 +1,8 @@
 package com.ruoyi.web.controller.pms.finance.inout.service.impl;
 
 import java.util.List;
+
+import com.ruoyi.web.controller.pms.finance.inout.domain.MoneyStatVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.web.controller.pms.finance.inout.mapper.InOutMoneyMapper;
@@ -90,5 +92,10 @@ public class InOutMoneyServiceImpl implements IInOutMoneyService
     public int deleteInOutMoneyById(Long id)
     {
         return inOutMoneyMapper.deleteInOutMoneyById(id);
+    }
+
+    @Override
+    public List<MoneyStatVo> moneyStat(InOutMoney inOutMoney) {
+        return inOutMoneyMapper.moneyStat(inOutMoney);
     }
 }

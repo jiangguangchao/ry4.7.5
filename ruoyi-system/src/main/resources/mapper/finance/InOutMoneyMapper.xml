@@ -43,6 +43,34 @@
         order by id desc
     </select>
 
+    <select id="moneyStat" parameterType="InOutMoney" resultType="MoneyStatVo">
+<!--        select inOutFlag,-->
+<!--            <if test="useMasterType != null  and useMasterType != ''">-->
+<!--                useMasterType,-->
+<!--            </if>-->
+<!--            <if test="type != null  and type != ''">-->
+<!--                type,-->
+<!--            </if>-->
+<!--            sum(amount) amountCount from inoutmoney-->
+<!--        <where>-->
+<!--            <if test="inOutFlag != null "> and inOutFlag = #{inOutFlag}</if>-->
+<!--            <if test="type != null  and type != ''"> and type = #{type}</if>-->
+<!--            <if test="params.beginPayTime != null and params.beginPayTime != '' and params.endPayTime != null and params.endPayTime != ''"> and payTime between #{params.beginPayTime} and #{params.endPayTime}</if>-->
+<!--            <if test="useMasterType != null  and useMasterType != ''"> and useMasterType = #{useMasterType}</if>-->
+<!--            &lt;!&ndash;  <if test="payType != null  and payType != ''"> and payType = #{payType}</if>  &ndash;&gt;-->
+<!--        </where>-->
+<!--        group by inOutFlag-->
+<!--            <if test="useMasterType != null  and useMasterType != ''">-->
+<!--                , useMasterType-->
+<!--            </if>-->
+<!--            <if test="type != null  and type != ''">-->
+<!--                , type-->
+<!--            </if>-->
+
+        select inOutFlag, useMasterType, type, sum(amount) amountCount from inoutmoney
+        group by inOutFlag, useMasterType, type
+    </select>
+
     <select id="selectInOutMoneyById" parameterType="Long" resultMap="InOutMoneyResult">
         <include refid="selectInOutMoneyVo"/>
         where id = #{id}
