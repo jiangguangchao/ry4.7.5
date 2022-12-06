@@ -135,7 +135,7 @@ public class InOutMoneyController extends BaseController
     }
 
 
-    @RequiresPermissions("finance:inOutMoney:stat")
+    @RequiresPermissions("finance:inOutMoney:statView")
     @PostMapping("/stat")
     @ResponseBody
     public TableDataInfo stat(InOutMoney inOutMoney)
