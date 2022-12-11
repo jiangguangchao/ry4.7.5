@@ -16,7 +16,10 @@
                         </li>
                         <li>
                             <label>收/支：</label>
-                            <input type="text" name="inOutFlag"/>
+                            <select name="inOutFlag" th:with="type=${@dict.getType('in_out_money_type')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                            </select>
                         </li>
                         <li>
                             <label>收支分类：</label>
@@ -179,7 +182,18 @@
                         actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
                         return actions.join('');
                     }
-                }]
+                }
+            ],
+            rowStyle : function (row, index) {
+                console.log(row.inOutFlag)
+                if (row.inOutFlag == 1) {
+                    return  {css:{"background-color":'rgba(26, 179, 148,0.3)'}};
+                }
+                if (row.inOutFlag == 2) {
+                    return  {css:{"background-color":'rgba(248, 172, 89,0.3)'}};
+                }
+
+            }
         };
         $.table.init(options);
     });
