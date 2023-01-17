@@ -37,6 +37,7 @@ public class DruidConfig
     public DataSource masterDataSource(DruidProperties druidProperties)
     {
         DruidDataSource dataSource = DruidDataSourceBuilder.create().build();
+        dataSource.setPassword(System.getProperty("mysql.pwd"));
         return druidProperties.dataSource(dataSource);
     }
 
