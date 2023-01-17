@@ -2,6 +2,7 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
     <th:block th:include="include :: header('收支明细列表')" />
+    <th:block th:include="include :: bootstrap-fileinput-css" />
 </head>
 <body class="gray-bg">
 <div class="container-div">
@@ -88,7 +89,25 @@
         </div>
     </div>
 </div>
+<div class="wrapper wrapper-content animated fadeInRight" id="picUploadDiv" style="display: none">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="form-group">
+                        <label class="font-noraml">多文件上传</label>
+                        <div class="file-loading">
+                            <input id="multipleFile" name="files" type="file" multiple>
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <th:block th:include="include :: footer" />
+<th:block th:include="include :: bootstrap-fileinput-js" />
 <script th:inline="javascript">
     var editFlag = [[${@permission.hasPermi('finance:inOutMoney:edit')}]];
     var removeFlag = [[${@permission.hasPermi('finance:inOutMoney:remove')}]];
@@ -97,6 +116,102 @@
     var useMasterTypeDatas = [[${@dict.getType('money_use_master_type')}]];
     var payTypeDatas = [[${@dict.getType('pay_type')}]];
     var prefix = ctx + "finance/inOutMoney";
+
+    //全局变量
+    var picBeLongInfo = {
+        belongId: -1
+    };
+
+    function getBeLongInfo() {
+        return picBeLongInfo
+    }
+
+    $(document).ready(function () {
+        // 多图上传
+        $("#multipleFile").fileinput({
+            uploadUrl: ctx + 'common/uploads',
+            uploadAsync: false,
+            uploadExtraData: getBeLongInfo
+        }).on('filebatchuploadsuccess', function (event, data, previewId, index) {
+            var rsp = data.response;
+            log.info("upload msg: " + data.msg)
+            log.info("return urls：" + rsp.urls)
+            log.info("reutrn fileNames：" + rsp.fileNames)
+            log.info("reutrn newFileNames：" + rsp.newFileNames)
+            log.info("return originalFilenames：" + rsp.originalFilenames)
+        }).on('fileremoved', function (event, id, index) {
+            $("input[name='" + event.currentTarget.id + "']").val('')
+        })
+    });
+
+    function getPic(id) {
+        //查询图片表
+
+        $.ajax({
+            type: "POST",
+            url: "inOutMoney/picList",
+            data: {
+                "id":id
+            },
+            success: function(data) {
+                if (data.code == 0) {
+                    if (data.total < 1) {
+                    } else {
+                        //显示图片
+                        showPic(data.rows)
+
+                    }
+                }
+                else {
+                    alert("查询图片失败!");
+                    return false;
+                }
+            }
+
+
+        });
+
+    };
+
+    function showPic(picList) {
+
+        var dataArr = [];
+        for (var pic of picList) {
+            var picData = {};
+            picData.pid = 1;
+            picData.src = pic.picPath;
+            picData.thumb = pic.picPath;
+            dataArr.push(picData)
+        }
+        var json = {
+            "title": "票据图片", //相册标题
+            "id": 123, //相册id
+            "start": 0, //初始显示的图片序号，默认0
+            "data": dataArr
+        };
+        layer.photos({
+            photos: json,
+            closeBtn: 0, //右上角按钮，可通过配置1和2来展示，如果不显示，则closeBtn: 0
+            anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+        });
+    };
+
+    function uploadPic(id) {
+        picBeLongInfo.belongId = id;
+        if (picBeLongInfo.belongId < 1) {
+            return
+        }
+        layer.open({
+            type: 1,
+            shade: 0.4,
+            title: false, //不显示标题
+            content: $('#picUploadDiv'), //捕获的元素，注意：最好该指定的元素要存放在body最外层，否则可能被其它的相对元素所影响
+            cancel: function(){
+                picBeLongInfo.belongId = -1;
+            }
+        });
+    }
+
 
     $(function() {
         var options = {
@@ -167,7 +282,13 @@
                 },
                 {
                     field: 'billPic',
-                    title: '票据图片'
+                    title: '票据图片',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<button type="button" class="btn btn-primary" onclick="getPic(\'' + row.id + '\')">查看图片</button>');
+                        actions.push('<button type="button" class="btn btn-primary" onclick="uploadPic(\'' + row.id + '\')">上传图片</button>');
+                        return actions.join('');
+                    }
                 },
                 {
                     field: 'remark',
@@ -196,6 +317,7 @@
             }
         };
         $.table.init(options);
+
     });
 </script>
 </body>

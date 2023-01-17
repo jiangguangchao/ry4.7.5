@@ -2,6 +2,8 @@ package com.ruoyi.web.controller.pms.finance.inout.controller;
 
 import java.util.List;
 
+import com.ruoyi.system.domain.Pictures;
+import com.ruoyi.system.service.IPicturesService;
 import com.ruoyi.web.controller.pms.finance.inout.domain.MoneyStatVo;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,8 @@ public class InOutMoneyController extends BaseController
 
     @Autowired
     private IInOutMoneyService inOutMoneyService;
+
+    @Autowired private IPicturesService picturesService;
 
     @RequiresPermissions("finance:inOutMoney:view")
     @GetMapping()
@@ -143,4 +147,29 @@ public class InOutMoneyController extends BaseController
         List<MoneyStatVo> moneyStatVos = inOutMoneyService.moneyStat(inOutMoney);
         return getDataTable(moneyStatVos);
     }
+
+    /**
+     * 查看图片
+     * @param inOutMoney
+     * @return
+     */
+    @RequiresPermissions("finance:inOutMoney:picList")
+    @PostMapping("/picList")
+    @ResponseBody
+    public TableDataInfo picList(InOutMoney inOutMoney)
+    {
+
+
+        logger.info("查询图片入口");
+        if (inOutMoney == null || inOutMoney.getId() == null) {
+            logger.info("查询图片没有收到参数");
+        }
+        Pictures picture = new Pictures();
+        picture.setType("in_out");
+        picture.setBelongId(inOutMoney.getId());
+        List<Pictures> picturesList = picturesService.selectPicturesList(picture);
+        return getDataTable(picturesList);
+    }
+
+
 }

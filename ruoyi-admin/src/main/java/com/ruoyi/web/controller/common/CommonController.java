@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.system.domain.Pictures;
+import com.ruoyi.system.service.IPicturesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +38,9 @@ public class CommonController
 
     @Autowired
     private ServerConfig serverConfig;
+
+    @Autowired
+    private IPicturesService picturesService;
 
     private static final String FILE_DELIMETER = ",";
 
@@ -102,8 +108,14 @@ public class CommonController
      */
     @PostMapping("/uploads")
     @ResponseBody
-    public AjaxResult uploadFiles(List<MultipartFile> files) throws Exception
+    public AjaxResult uploadFiles(List<MultipartFile> files, Long belongId) throws Exception
     {
+
+        log.info("通用上传请求多个  入口记录");
+        if (belongId == null || belongId < 1) {
+            log.error("没有传入belongId或传入belongId不合法，无法完成上传操作,belongId:[{}]", belongId);
+            return AjaxResult.error("没有传入belongId，无法完成上传操作");
+        }
         try
         {
             // 上传文件路径
@@ -112,6 +124,7 @@ public class CommonController
             List<String> fileNames = new ArrayList<String>();
             List<String> newFileNames = new ArrayList<String>();
             List<String> originalFilenames = new ArrayList<String>();
+            List<Pictures> picturesList = new ArrayList<>();
             for (MultipartFile file : files)
             {
                 // 上传并返回新文件名称
@@ -121,7 +134,24 @@ public class CommonController
                 fileNames.add(fileName);
                 newFileNames.add(FileUtils.getName(fileName));
                 originalFilenames.add(file.getOriginalFilename());
+
+                Pictures picture = new Pictures();
+                picture.setBelongId(belongId);
+                picture.setType("in_out");//关联收支表
+                picture.setPicPath(fileName);
+                picturesList.add(picture);
             }
+
+            //保存数据库
+            for (Pictures pictures : picturesList) {
+                int result = picturesService.insertPictures(pictures);
+                if (result < 1) {
+                    log.error("图片信息保存数据库失败");
+                } else {
+                    log.info("图片信息保存数据库成功");
+                }
+            }
+
             AjaxResult ajax = AjaxResult.success();
             ajax.put("urls", StringUtils.join(urls, FILE_DELIMETER));
             ajax.put("fileNames", StringUtils.join(fileNames, FILE_DELIMETER));

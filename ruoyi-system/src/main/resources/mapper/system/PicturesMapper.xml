@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.PicturesMapper">
+    
+    <resultMap type="Pictures" id="PicturesResult">
+        <result property="id"    column="id"    />
+        <result property="belongId"    column="belongId"    />
+        <result property="type"    column="type"    />
+        <result property="picPath"    column="picPath"    />
+    </resultMap>
+
+    <sql id="selectPicturesVo">
+        select id, belongId, type, picPath from pictures
+    </sql>
+
+    <select id="selectPicturesList" parameterType="Pictures" resultMap="PicturesResult">
+        <include refid="selectPicturesVo"/>
+        <where>  
+            <if test="belongId != null "> and belongId = #{belongId}</if>
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+            <if test="picPath != null  and picPath != ''"> and picPath = #{picPath}</if>
+        </where>
+    </select>
+    
+    <select id="selectPicturesById" parameterType="Long" resultMap="PicturesResult">
+        <include refid="selectPicturesVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertPictures" parameterType="Pictures" useGeneratedKeys="true" keyProperty="id">
+        insert into pictures
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="belongId != null">belongId,</if>
+            <if test="type != null and type != ''">type,</if>
+            <if test="picPath != null and picPath != ''">picPath,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="belongId != null">#{belongId},</if>
+            <if test="type != null and type != ''">#{type},</if>
+            <if test="picPath != null and picPath != ''">#{picPath},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePictures" parameterType="Pictures">
+        update pictures
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="belongId != null">belongId = #{belongId},</if>
+            <if test="type != null and type != ''">type = #{type},</if>
+            <if test="picPath != null and picPath != ''">picPath = #{picPath},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePicturesById" parameterType="Long">
+        delete from pictures where id = #{id}
+    </delete>
+
+    <delete id="deletePicturesByIds" parameterType="String">
+        delete from pictures where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>
